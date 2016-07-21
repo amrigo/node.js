@@ -40,4 +40,10 @@ echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/
 apt-get update >> $log
 apt-get install -y docker-engine >> $log
 
+# criando imagem usando o Dockerfile
+echo "criando imagem da app node.js"
+cd app
+docker build -t node.js/node-app .
 
+# iniciando a aplicacao node.js
+docker run -p 3000:3000 -d node.js/node-app
