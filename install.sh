@@ -5,7 +5,7 @@ log="$(date +%d%m%Y)-install.log"
 
 # verifica root
 if [ $(id -u) -ne 0 ]; then
-  echo "voce precisa ser root para continuar"
+  echo "Voce precisa ser root para continuar"
   exit 1
 fi
 
@@ -20,11 +20,11 @@ fi
 # boas vindas
 echo
 echo "Bem-vindo ao sistema de deploy do ambiente node.js"
-echo "para maiores informacoes consulte o arquivo de log gerado durante o processo de deploy"
+echo "Para maiores informacoes consulte o arquivo de log gerado durante o processo de deploy"
 echo
 
 # iniciando procedimento
-echo "iniciando o processo de deploy..."
+echo "Iniciando o processo de deploy..."
 echo
 
 # desabilitando ipv6
