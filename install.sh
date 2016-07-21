@@ -25,15 +25,14 @@ echo
 # iniciando procedimento
 echo "iniciando o processo de deploy..."
 
-# instalacao das atualizacoes do sistema
-echo "verificando se o seu sistema esta atualizado..."
-apt-get update  >> $log
-apt-get upgrade -y >> $log
-if [ $? -ne 0 ]; then
-  echo "erro ao instalar atualizacoes"
-  echo "processo interrompido"
-  echo "consulte o arquivo de log para maiores informacoes"
-  exit 1
-fi
+# desabilitando ipv6
+echo "desabilitando ipv6 para evitar conflitos"
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 
-
+# instalacao dos pacotes do docker
+echo "instalando docker e suas dependencias"
+apt-get update >> $log
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D >> $log
+echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list >> $log
+apt-get update >> $log
+apt-get install -y docker-engine >> $log
