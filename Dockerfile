@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 
 # atualiza o sistema ubuntu
-RUN apt-get update
+RUN apt-get update 
+RUN apt-get install apt-utils -y
 RUN apt-get upgrade -y
 
 # instala o python

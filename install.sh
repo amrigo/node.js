@@ -30,21 +30,15 @@ if [ $? -ne 0 ]; then
   sysctl -p > /dev/null
 fi
 
-# atualizacao do sistema
-echo "Atualizando o sistema, aguarde..."
-apt-get update
-apt-get upgrade -y
-
 # instalacao dos pacotes do docker
 echo "Instalando docker e suas dependencias"
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list
+echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" >> /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y docker-engine
 
 # criando imagem usando o Dockerfile
 echo "Criando imagem do app node.js"
-cd app
 docker build -t node.js/node-app .
 
 # iniciando a aplicacao node.js
