@@ -15,7 +15,7 @@ if [ $(lsb_release -r | awk -F" " '{ print $2 }') != "16.04" ]; then
   echo "por favor, corriga sua versao e tente novamente"
   echo "processo interrompido"
   exit 1
-fi 
+fi
 
 # boas vindas
 echo "bem-vindo ao sistema de deploy do ambiente node.js"
@@ -29,10 +29,15 @@ echo "iniciando o processo de deploy..."
 echo "desabilitando ipv6 para evitar conflitos"
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 
+# atualizacao do sistema
+apt-get update >> $log
+apt-get upgrade -y >> $log 
+
 # instalacao dos pacotes do docker
 echo "instalando docker e suas dependencias"
-apt-get update >> $log
 apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D >> $log
 echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" | tee /etc/apt/sources.list.d/docker.list >> $log
 apt-get update >> $log
 apt-get install -y docker-engine >> $log
+
+
