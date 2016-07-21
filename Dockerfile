@@ -1,7 +1,8 @@
 FROM ubuntu:16.04
 
 # atualiza o sistema ubuntu
-RUN apt-get update 
+RUN apt-get update
+RUN apt-get upgrade -y -o Dpkg::Options::="--force-confold"
 
 # instala o python
 RUN apt-get install python -y
@@ -15,7 +16,7 @@ RUN apt-get install wget -y
 
 # instala o node.js
 RUN wget -O /opt/node-v4.4.7.tar.gz https://nodejs.org/dist/v4.4.7/node-v4.4.7.tar.gz
-RUN tar xvfz /opt/node-v4.4.7.tar.gz
+RUN tar xvfz /opt/node-v4.4.7.tar.gz -C /opt/
 RUN cd /opt/node-v4.4.7/
 RUN python configure
 RUN make
