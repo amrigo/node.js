@@ -5,15 +5,13 @@ RUN apt-get update
 
 # instala o node.js
 COPY node-v4.4.7.tar.gz /opt/node-v4.4.7.tar.gz
-RUN cd /opt/
-RUN tar xvfz node-v4.4.7.tar.gz
+RUN tar xvfz /opt/node-v4.4.7.tar.gz -C /opt/
 RUN ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
 RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 
 # instala a dependencia express
 COPY package.json /opt/package.json
-RUN cd /opt/
-RUN npm install
+RUN npm install /opt/
 
 # copia o index para a pasta opt do container
 COPY index.js /opt/index.js
