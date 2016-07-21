@@ -28,8 +28,12 @@ echo "Iniciando o processo de deploy..."
 echo
 
 # desabilitando ipv6
-echo "Desabilitando ipv6 para evitar conflitos"
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf > /dev/null
+if [ $? -ne 0 ]; then
+  echo "Desabilitando ipv6 para evitar conflitos"
+  echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+  sysctl -p > /dev/null
+fi
 
 # atualizacao do sistema
 echo "Atualizando o sistema, aguarde..."
