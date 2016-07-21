@@ -8,7 +8,7 @@ fi
 
 # verificando a versao do sistema operacional
 if [ $(lsb_release -r | awk -F" " '{ print $2 }') != "16.04" ]; then
-  echo "Sistema homologado para a versao: Ubuntu Server 16.04 LTS"
+  echo "Sistema homologado para a versao: Ubuntu 16.04 LTS"
   echo "Processo interrompido"
   exit 1
 fi
