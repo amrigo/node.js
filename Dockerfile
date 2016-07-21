@@ -2,25 +2,13 @@ FROM ubuntu:16.04
 
 # atualiza o sistema ubuntu
 RUN apt-get update
-RUN apt-get upgrade -y -o Dpkg::Options::="--force-confold"
-
-# instala o python
-RUN apt-get install python -y
-
-# instala compiladores
-RUN apt-get install make -y
-RUN apt-get install g++ -y
-
-# instalando o wget
-RUN apt-get install wget -y
 
 # instala o node.js
-RUN wget -O /opt/node-v4.4.7.tar.gz https://nodejs.org/dist/v4.4.7/node-v4.4.7.tar.gz
-RUN tar xvfz /opt/node-v4.4.7.tar.gz -C /opt/
-RUN cd /opt/node-v4.4.7/
-RUN python configure
-RUN make
-RUN make install
+COPY node-v4.4.7.tar.gz /opt/node-v4.4.7.tar.gz
+RUN cd /opt/
+RUN tar xvfz node-v4.4.7.tar.gz
+RUN ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
+RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 
 # instala a dependencia express
 COPY package.json /opt/package.json
