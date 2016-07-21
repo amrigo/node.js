@@ -29,4 +29,4 @@ COPY . /opt
 
 # habilita a porta 3000 para execucao do app
 EXPOSE 3000
-CMD ["node", "/src/index.js"]
+CMD ["node", "/opt/index.js"]
