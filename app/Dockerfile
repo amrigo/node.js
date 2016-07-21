@@ -1,20 +1,24 @@
 FROM ubuntu:16.04
 
-# system update
+# atualiza o sistema ubuntu
 RUN apt update && apt upgrade -y
 
-# install node.js
+# instala o npm
+RUN apt install npm -y
+
+# instala o node.js
 COPY node-v4.4.7.tar.gz /src/node-v4.4.7.tar.gz
-RUN cd /src ; tar xvfz node-v4.4.7.tar.gz .
+RUN cd /src
+RUN tar xvfz node-v4.4.7.tar.gz
 
-
-
-# installing dependencies 
+# instala a dependencia express
 COPY package.json /src/package.json
-RUN cd /src; npm install
+RUN cd /src
+RUN npm install
 
-# Copia a app para a pasta src do container
+# copia o app para a pasta src do container
 COPY . /src
 
-EXPOSE 8080
+# habilita a porta 3000 para execucao do app
+EXPOSE 3000
 CMD ["node", "/src/index.js"]
