@@ -10,16 +10,18 @@ RUN ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bi
 RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 
 # instala a dependencias npm
-RUN cd /opt/
-RUN npm config set prefix "/opt/node_modules"
+RUN cd /opt/node-v4.4.7-linux-x64/
+RUN npm config set prefix "/opt/node-v4.4.7-linux-x64/node_modules"
 RUN npm install express --save
 RUN npm install cluster-service --save
+RUN npm install cluster --save
 RUN npm install os --save
 RUN npm install http --save
 
 # copia os arquivos para a pasta opt do container
 COPY app.js /opt/app.js
+COPY cluster.js /opt/cluster.js
 
 # habilita a porta 3000 para execucao do app
 EXPOSE 3000
-CMD ["node", "/opt/app.js"]
+CMD ["node", "/opt/cluster.js"]
