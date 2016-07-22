@@ -14,7 +14,7 @@ COPY package.json /opt/package.json
 RUN npm install /opt/
 
 # copia o index para a pasta opt do container
-COPY index.js /opt/index.js
+COPY index.js /opt/cluster.js
 
 # habilita a porta 3000 para execucao do app
 EXPOSE 3000
