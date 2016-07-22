@@ -13,9 +13,10 @@ RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 COPY package.json /opt/package.json
 RUN npm install /opt/
 
-# copia o index para a pasta opt do container
-COPY index.js /opt/cluster.js
+# copia os arquivos para a pasta opt do container
+COPY app.js /opt/app.js
+COPY cluster.js /opt/cluster.js
 
 # habilita a porta 3000 para execucao do app
 EXPOSE 3000
-CMD ["node", "/opt/index.js"]
+CMD ["node", "/opt/cluster.js"]

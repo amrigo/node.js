@@ -1,7 +1,7 @@
 {
   "name": "app-node-js",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "App Node em Docker",
   "author": "Bruno Tougeiro <b.tougeiro@icloud.com>",
   "dependencies": {
