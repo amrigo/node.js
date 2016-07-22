@@ -15,8 +15,7 @@ RUN npm install /opt/
 
 # copia os arquivos para a pasta opt do container
 COPY app.js /opt/app.js
-COPY cluster.js /opt/cluster.js
 
 # habilita a porta 3000 para execucao do app
 EXPOSE 3000
-CMD ["node", "/opt/cluster.js"]
+CMD ["node", "/opt/app.js"]
