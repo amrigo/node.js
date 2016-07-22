@@ -12,9 +12,6 @@ RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 # instala a dependencia express
 RUN npm install express --save
 
-# instala o servico de cluster do node.js
-RUN npm install cluster-service --save
-
 # copia os arquivos para a pasta opt do container
 COPY app.js /opt/app.js
 
