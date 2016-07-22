@@ -1,13 +1,12 @@
-var http = require('http');
+var express = require('express');
+var app = express();
 
-var server = http.createServer(function(request, response)
+app.get('/', function (req, res)
 {
-  response.writeHead(200, {'Content-Type': 'text/html'});
-  response.write("<p>Hello Node.JS</p>");
-  response.end();
+  res.send('Hello World!');
 });
 
-server.listen(3000, function()
+app.listen(3000, function ()
 {
-  console.log("Servidor Node no ar");
+  console.log('Example app listening on port 3000!');
 });
