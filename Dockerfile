@@ -17,9 +17,6 @@ RUN npm install cluster-service --save
 RUN npm install os --save
 RUN npm install http --save
 
-# instala o servico de cluster do node.js
-RUN npm install cluster-service --save
-
 # copia os arquivos para a pasta opt do container
 COPY app.js /opt/app.js
 
