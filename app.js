@@ -1,28 +1,37 @@
-var cluster = require('cluster');  
-var crypto = require('crypto');  
-var express = require('express');  
-var sleep = require('sleep');  
-var numCPUs = require('os').cpus().length;
+var cluster = require('cluster');
+var http = require('http');
+var os = require('os');
+var express = require('express');
+var app = express();
+var cpuCount = os.cpus().length;
 
-if (cluster.isMaster && numCPUs > 0 || numCPUs <= 32) {  
-    for (var i = 0; i < numCPUs; i++) {
-        // Create a worker
-        cluster.fork();
-    }
-} else {
-    // Workers share the TCP connection in this server
-    var app = express();
+if (cluster.isMaster && cpuCount > 0 || cpuCount <= 32)
+{
+  for (var i = 0; i < cpuCount; i++)
+  {
+    cluster.fork();
+  }
 
-    app.get('/', function (req, res) {
-        // Simulate route processing delay
-        var randSleep = Math.round(10000 + (Math.random() * 10000));
-        sleep.usleep(randSleep);
+  cluster.on('exit', function (worker)
+  {
+    console.log('Worker %d died :(', worker.id);
+    cluster.fork();
+  });
+}
+else
+{
+  app.get('/', function (request, response)
+  {
+    console.log('Request to worker %d', cluster.worker.id);
+    response.send('Hello from Worker ' + cluster.worker.id);
+  });
 
-        var numChars = Math.round(5000 + (Math.random() * 5000));
-        var randChars = crypto.randomBytes(numChars).toString('hex');
-        res.send(randChars);
-    });
+  app.listen(3000);
+  console.log('Worker %d running!', cluster.worker.id);
 
-    // All workers use this port
-    app.listen(3000);
+  http.createServer(function(req, res)
+  {
+    res.writeHead(200);
+    res.end("Hello World!");
+  }).listen(3000);
 }
