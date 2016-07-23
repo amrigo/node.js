@@ -48,4 +48,4 @@ echo "Criando imagem do app node.js"
 docker build -t node.js/node-app .
 
 # iniciando a aplicacao node.js
-docker run -p 0.0.0.0:3000:3000 -d node.js/node-app
+docker run -p 0.0.0.0:3000:3000 --name node-app -d node.js/node-app
