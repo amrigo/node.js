@@ -36,6 +36,7 @@ apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E8
 echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" >> /etc/apt/sources.list.d/docker.list
 apt-get update
 apt-get install -y docker-engine
+apt-get install -y docker-compose
 
 # instalando nginx para criar proxy reverso
 echo "instalando nginx"
