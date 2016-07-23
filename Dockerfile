@@ -10,8 +10,7 @@ RUN ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bi
 RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 
 # instala a dependencia npm e aplicacoes usando npm
-RUN cd /opt/node-v4.4.7-linux-x64/
-RUN npm config set prefix "/opt/node-v4.4.7-linux-x64/node_modules"
+RUN cd /opt
 RUN npm install express --save
 RUN npm install cluster --save
 RUN npm install os --save
