@@ -37,6 +37,12 @@ echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" >> /etc/apt/sou
 apt-get update
 apt-get install -y docker-engine
 
+# instalando nginx para criar proxy reverso
+echo "instalando nginx"
+apt-get install nginx -y
+cp default /etc/nginx/sites-avaliable/default
+service nginx restart
+
 # criando imagem usando o Dockerfile
 echo "Criando imagem do app node.js"
 docker build -t node.js/node-app .
