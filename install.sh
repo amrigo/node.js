@@ -40,7 +40,7 @@ apt-get install -y docker-engine
 # instalando nginx para criar proxy reverso
 echo "instalando nginx"
 apt-get install nginx -y
-cp default /etc/nginx/sites-avaliable/default
+cp default /etc/nginx/sites-available/default
 service nginx restart
 
 # criando imagem usando o Dockerfile
