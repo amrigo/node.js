@@ -38,15 +38,9 @@ apt-get update
 apt-get install -y docker-engine
 apt-get install -y docker-compose
 
-# instalando nginx para criar proxy reverso
-echo "instalando nginx"
-apt-get install nginx -y
-cp default /etc/nginx/sites-available/default
-service nginx restart
-
 # criando imagem usando o Dockerfile
 echo "Criando imagem do app node.js"
 docker build -t node.js/node-app .
 
 # iniciando a aplicacao node.js
-docker run -p 0.0.0.0:3000:3000 --name node-app -d node.js/node-app
+docker run -p 0.0.0.0:80:80 --name node-app -d node.js/node-app
