@@ -76,6 +76,14 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+# instalando benchmarking throghput
+apt-get install apache2-utils -y -q > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro na instalacao do servico de benchmarking"
+  echo "processo cancelado"
+  exit 1
+fi
+
 # instalando servico de email
 echo "instalando servico de email"
 apt-get install -y mailutils
