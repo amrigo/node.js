@@ -12,7 +12,6 @@ RUN ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 # instalando nginx para criar proxy reverso
 RUN apt-get install nginx -y
 COPY default /etc/nginx/sites-available/default
-RUN service nginx restart
 
 # instala a dependencia npm e aplicacoes usando npm
 RUN cd /opt
@@ -24,6 +23,7 @@ RUN npm install os --save
 COPY app.js /opt/app.js
 COPY cluster.js /opt/cluster.js
 
-# habilita a porta 3000 para execucao do app
-EXPOSE 80 3000
+# habilita a porta para execucao do app
+EXPOSE 80
+CMD ["service", "start", "nginx"]
 CMD ["node", "/opt/cluster.js"]
