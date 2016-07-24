@@ -78,7 +78,7 @@ fi
 
 # instalando servico de email
 echo "instalando servico de email"
-apt-get install -y heirloom-mailx -q > /dev/null
+apt-get install -y mailutils
 if [ $? -ne 0 ]; then
   echo "erro na instalacao do servico de email"
   echo "processo cancelado"
