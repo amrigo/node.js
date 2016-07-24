@@ -5,3 +5,7 @@
 # PM2 Versao: v1.1.3
 # npm Versao: v2.15.8
 # Execute o arquivo install.sh que ele fará todo o processo
+# NOTA: na hora de instalar o servico de email, escolha: Internet Site e seu System mail name, normalmente é o seu hostname
+# Isso pode mudar de acordo com o tipo de configuração que deseja realizar!
+
+# Obrigado!

@@ -178,6 +178,8 @@ if [ $? -ne 0 ]; then
   echo "processo cancelado"
   exit 1
 fi
+
+# instalacao de rotatividade de logs
 echo "criando rotatividade de logs"
 pm2 logrotate > /dev/null
 if [ $? -ne 0 ]; then
@@ -191,6 +193,15 @@ echo "reiniciando o servidor web"
 systemctl restart nginx > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao reiniciar servidor web"
+  echo "processo cancelado"
+  exit 1
+fi
+
+# instalacao htop (sistema de gerenciamento de tarefas)
+echo "instalando htop (sistema de gerenciamento de tarefas)"
+apt-get install -y htop -q > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro ao instalar aplicacao htop"
   echo "processo cancelado"
   exit 1
 fi
