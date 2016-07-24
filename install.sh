@@ -37,9 +37,15 @@ echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" >> /etc/apt/sou
 apt-get update
 apt-get install -y docker-engine
 
+# instalacao do nginx para criacao de redirecionamento
+echo "instalando nginx"
+apt-get install -y nginx
+cp default /etc/nginx/sites-available/default
+systemctl start nginx
+
 # criando imagem usando o Dockerfile
 echo "Criando imagem do app node.js"
 docker build -t node.js/node-app .
 
 # iniciando a aplicacao node.js
-docker run -p 80:80 --name node-app -d node.js/node-app
+docker run -p 80:3000 --name node-app -d node.js/node-app
