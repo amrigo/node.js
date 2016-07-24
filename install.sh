@@ -78,7 +78,7 @@ fi
 
 # instalando servico de email
 echo "instalando servico de email"
-apt-get install -y mailutils -q > /dev/null
+apt-get install -y mailutils
 if [ $? -ne 0 ]; then
   echo "erro na instalacao do servico de email"
   echo "processo cancelado"
@@ -171,7 +171,8 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "criando link da aplicacao"
-ln -sf /opt/node-v4.4.7-linux-x64/node_modules/pm2/bin/pm2 /usr/bin/pm2 > /dev/null
+ln -sf /opt/node-v4.4.7-linux-x64/bin/pm2 /usr/bin/pm2 > /dev/null && \
+ln -sf /opt/node-v4.4.7-linux-x64/bin/pm2-dev /usr/bin/pm2-dev > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao criar link da dependencia pm2"
   echo "processo cancelado"
