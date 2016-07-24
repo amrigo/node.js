@@ -131,6 +131,16 @@ if [ ! -d /agendamentos ]; then
   mkdir /agendamentos
 fi
 
+# copiando arquivo de throughput
+echo "copiando arquivo de throughput"
+cp ./scripts/throughput.sh /agendamentos/ > /dev/null && \
+chmod u+x /agendamentos/throughput.sh
+if [ $? -ne 0 ]; then
+  echo "erro ao copiar arquivo de throughput"
+  echo "processo cancelado"
+  exit 1
+fi
+
 # sistema de verificacao de servico ativo
 echo "criando monitoramento da aplicacao"
 cp ./scripts/reboot_services.sh /agendamentos/ > /dev/null && \
