@@ -77,7 +77,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # instalando benchmarking throghput
-apt-get install apache2-utils -y -q > /dev/null
+apt-get install siege -y -q > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro na instalacao do servico de benchmarking"
   echo "processo cancelado"
