@@ -41,11 +41,13 @@ apt-get install -y docker-engine
 echo "instalando nginx"
 apt-get install -y nginx
 cp default /etc/nginx/sites-available/default
-systemctl start nginx
+cp cert.crt /etc/ssl/private/cert.crt
+cp cert.key /etc/ssl/private/cert.key
+service nginx restart
 
 # criando imagem usando o Dockerfile
 echo "Criando imagem do app node.js"
 docker build -t node.js/node-app .
 
 # iniciando a aplicacao node.js
-docker run -p 80:3000 --name node-app -d node.js/node-app
+docker run -p 3000:3000 -d node.js/node-app
