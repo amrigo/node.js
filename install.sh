@@ -155,7 +155,7 @@ fi
 
 # instalacao das dependencias usando o npm
 echo "instalando as dependencias do npm"
-cd /opt/
+cd /opt/node-v4.4.7-linux-x64
 echo "instalando express"
 npm install express --save > /dev/null
 if [ $? -ne 0 ]; then
@@ -171,7 +171,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "criando link da aplicacao"
-ln -sf /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2 > /dev/null
+ln -sf /opt/node-v4.4.7-linux-x64/node_modules/pm2/bin/pm2 /usr/bin/pm2 > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao criar link da dependencia pm2"
   echo "processo cancelado"
