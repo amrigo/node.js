@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cpus=$(cat /proc/cpuinfo | grep processor | wc -l)
+
 # verifica root
 if [ $(id -u) -ne 0 ]; then
   echo "Voce precisa ser root para continuar"
@@ -30,24 +32,37 @@ if [ $? -ne 0 ]; then
   sysctl -p > /dev/null
 fi
 
-# instalacao dos pacotes do docker
-echo "Instalando docker e suas dependencias"
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-echo "deb https://apt.dockerproject.org/repo ubuntu-xenial main" >> /etc/apt/sources.list.d/docker.list
-apt-get update
-apt-get install -y docker-engine
-
 # instalacao do nginx para criacao de redirecionamento
 echo "instalando nginx"
 apt-get install -y nginx
 cp default /etc/nginx/sites-available/default
 cp cert.crt /etc/ssl/private/cert.crt
 cp cert.key /etc/ssl/private/cert.key
-service nginx restart
 
-# criando imagem usando o Dockerfile
-echo "Criando imagem do app node.js"
-docker build -t node.js/node-app .
+# instalacao do node.js
+wget https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.xz
+tar xvfJ node-v4.4.7-linux-x64.tar.xz -C /opt/node-v4.4.7-linux-x64.tar.xz
+ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
+ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 
-# iniciando a aplicacao node.js
-docker run -p 3000:3000 -d node.js/node-app
+# instalacao das dependencias usando o npm
+echo "instalacao das dependencias do npm"
+cd /opt/
+npm install express --save
+npm install pm2 -g
+ln -s /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2
+pm2 startup
+
+# copiando arquivo da aplicacao
+echo "copiando app do node para o sistema"
+cp app.js /opt/app.js
+
+# reiniciando o nginx
+systemctl restart nginx
+
+# iniciando a app
+if [ $cpus -gt 0 ] || [ $cpus -le 32 ]; then
+  pm2 start /opt/app.js -i 0
+else
+  pm2 start /opt/app.js -i $cpus
+fi
