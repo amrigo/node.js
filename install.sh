@@ -3,16 +3,6 @@
 dia=$(date +%d-%m-%Y)
 cpus=$(cat /proc/cpuinfo | grep processor | wc -l)
 
-vrf_error () {
-  if [ $? -ne 0]; then
-    echo
-    echo "erro ao efetuar esta operacao"
-    echo "verfique o problema e tente novamente"
-    echo "processo cancelado"
-    exit 1
-  fi
-}
-
 # verifica root
 if [ $(id -u) -ne 0 ]; then
   echo "voce precisa ser root para continuar"
@@ -40,71 +30,116 @@ fi
 
 # verifica conexao com a internet
 echo "verificando conexao com a internet"
-ping -c 2 8.8.8.8 2> /dev/null
-vrf_error
+ping -q -c 2 8.8.8.8 > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro de conexao com a internet"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # iniciando procedimento
 echo "iniciando deploy..."
 echo
 
 # desabilitando ipv6
-grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf 2> /dev/null
+grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf > /dev/null
 if [ $? -ne 0 ]; then
   echo "desabilitando ipv6"
   echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
   sysctl -p > /dev/null
-  vrf_error
+  if [ $? -ne 0 ]; then
+    echo "erro ao desabilitar conexao ipv6"
+    echo "processo cancelado"
+    exit 1
+  fi
 fi
 
 # instalacao do nginx para criacao de redirecionamento
 echo "instalando servidor web"
-apt-get install -y nginx 2> /dev/null
-echo "copiando arquivos de configuracao"
-cp web/default /etc/nginx/sites-available/default && \
-cp private/cert.crt /etc/ssl/private/cert.crt && \
-cp private/cert.key /etc/ssl/private/cert.key
-vrf_error
+apt-get install -y nginx -q > /dev/null && \
+echo "copiando arquivos de configuracao" && \
+cp ./web/default /etc/nginx/sites-available/default && \
+cp ./private/cert.crt /etc/ssl/private/cert.crt && \
+cp ./private/cert.key /etc/ssl/private/cert.key
+if [ $? -ne 0 ]; then
+  echo "erro na instalacao do servidor web"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # instalacao do node.js
 echo "baixando servidor node.js"
-wget -O /opt/node-v4.4.7-linux-x64.tar.xz https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.xz 2> /dev/null
-vrf_error
+wget -q -O /opt/node-v4.4.7-linux-x64.tar.xz https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.xz > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro no download do servidor node.js"
+  echo "processo cancelado"
+  exit 1
+fi
 echo "instalando aplicacao"
-tar xfJ /opt/node-v4.4.7-linux-x64.tar.xz -C /opt/ 2> /dev/null
-vrf_error
+tar xfJ /opt/node-v4.4.7-linux-x64.tar.xz -C /opt/ > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro ao instalar aplicacao node.js"
+  echo "processo cancelado"
+  exit 1
+fi
 echo "criando links da aplicacao"
 ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm && \
 ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao criar link da aplicacao node"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # instalacao das dependencias usando o npm
 echo "instalando as dependencias do npm"
 cd /opt/
 echo "instalando express"
-npm install express --save 2> /dev/null
-vrf_error
+npm install express --save > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro ao instalar dependencia express"
+  echo "processo cancelado"
+  exit 1
+fi
 echo "instalando pm2"
 npm install pm2 -g
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao instalar dependencia pm2"
+  echo "processo cancelado"
+  exit 1
+fi
 echo "criando link da aplicacao"
 ln -s /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2
-vrf_error
-echo "instalando modulo do pm2"
-pm2 completion install > /dev/null
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao criar link da dependencia pm2"
+  echo "processo cancelado"
+  exit 1
+fi
 echo "criando rotatividade de logs"
 pm2 logrotate > /dev/null
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao criar rotatividade de logs"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # copiando arquivo da aplicacao
 echo "copiando aplicacao do node para o sistema"
-cp apps/app.js /opt/app.js
-vrf_error
+cp ./apps/app.js /opt/app.js
+if [ $? -ne 0 ]; then
+  echo "erro ao copiar aplicacao node.js"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # reiniciando o nginx
 echo "reiniciando o servidor web"
 systemctl restart nginx
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao reiniciar servidor web"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # criando pasta de agendamentos
 if [ ! -d /agendamentos ]; then
@@ -113,24 +148,36 @@ fi
 
 # sistema de verificacao de servico ativo
 echo "criando monitoramento da aplicacao a cada 5 segundos"
-cp scripts/reboot_services.sh /agendamentos/ && \
+cp ./scripts/reboot_services.sh /agendamentos/ && \
 chmod u+x /agendamentos/reboot_services.sh && \
 echo "* * * * * sleep 5 && /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao criar servico de monitoramento"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # sistema de verificacao de acesso ao servidor web
 echo "criando monitoramento de acesso ao servidor web"
 cp scripts/frequencia_web.sh /agendamentos/ && \
 chmod u+x /agendamentos/frequencia_web.sh && \
 echo "59 23 * * * /agendamentos/frequencia_web.sh" >> /var/spool/cron/crontabs/root
-vrf_error
+if [ $? -ne 0 ]; then
+  echo "erro ao criar servico de verificacao de acesso ao servidor web"
+  echo "processo cancelado"
+  exit 1
+fi
 
 # iniciando a app
 echo "iniciando a aplicacao node.js"
 pm2 start /opt/app.js -i 0
-vrf_error
-
-echo "procedimento concluido com sucesso!"
+if [ $? -ne 0 ]; then
+  echo "erro ao iniciar aplicacao node.js"
+  echo "processo cancelado"
+  exit 1
+else
+  echo "procedimento concluido com sucesso!"
+fi
 
 # ajuda
 echo "ajuda:"
