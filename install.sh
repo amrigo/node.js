@@ -153,6 +153,14 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+# copiando arquivo de deploy e rollback
+cp ./scripts/uproll.sh /agendamentos/ > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro ao copiar arquivo"
+  echo "processo cancelado"
+  exit 1
+fi
+
 # instalacao das dependencias usando o npm
 echo "instalando as dependencias do npm"
 cd /opt
