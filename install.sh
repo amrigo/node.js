@@ -7,14 +7,11 @@ vrf_error () {
   if [ $? -ne 0]; then
     echo
     echo "erro ao efetuar esta operacao"
+    echo "verfique o problema e tente novamente"
     echo "processo cancelado"
     exit 1
   fi
 }
-
-rollback () {
-  rm -rf /opt/*
-  tar xfz /var/backups/node.${dia}.tar.gz -C /opt
 
 # verifica root
 if [ $(id -u) -ne 0 ]; then
@@ -48,15 +45,7 @@ vrf_error
 
 # iniciando procedimento
 echo "iniciando deploy..."
-
-# verificando estrutura de pasta
-echo "verificando estrutura de pastas"
-if [ -d /opt/node_modules/ ]; then
-  echo "criando backup do ambiente atual"
-  tar cfz /var/backups/node.${dia}.tar.gz /opt
-  vrf_error
-  echo "arquivo de backup gerado em: /var/backups"
-fi
+echo
 
 # desabilitando ipv6
 grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf 2> /dev/null
@@ -70,18 +59,21 @@ fi
 # instalacao do nginx para criacao de redirecionamento
 echo "instalando servidor web"
 apt-get install -y nginx 2> /dev/null
-cp default /etc/nginx/sites-available/default
-cp cert.crt /etc/ssl/private/cert.crt
-cp cert.key /etc/ssl/private/cert.key
+echo "copiando arquivos de configuracao"
+cp web/default /etc/nginx/sites-available/default && \
+cp private/cert.crt /etc/ssl/private/cert.crt && \
+cp private/cert.key /etc/ssl/private/cert.key
 vrf_error
 
 # instalacao do node.js
 echo "baixando servidor node.js"
-wget https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.xz 2> /dev/null
+wget -O /opt/node-v4.4.7-linux-x64.tar.xz https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.xz 2> /dev/null
 vrf_error
-echo "extraindo conteudo"
-tar xfJ node-v4.4.7-linux-x64.tar.xz -C /opt/node-v4.4.7-linux-x64.tar.xz 2> /dev/null
-ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
+echo "instalando aplicacao"
+tar xfJ /opt/node-v4.4.7-linux-x64.tar.xz -C /opt/ 2> /dev/null
+vrf_error
+echo "criando links da aplicacao"
+ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm && \
 ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
 vrf_error
 
@@ -93,14 +85,20 @@ npm install express --save 2> /dev/null
 vrf_error
 echo "instalando pm2"
 npm install pm2 -g
+vrf_error
+echo "criando link da aplicacao"
 ln -s /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2
+vrf_error
+echo "instalando modulo do pm2"
 pm2 completion install > /dev/null
+vrf_error
+echo "criando rotatividade de logs"
 pm2 logrotate > /dev/null
 vrf_error
 
 # copiando arquivo da aplicacao
 echo "copiando aplicacao do node para o sistema"
-cp app.js /opt/app.js
+cp apps/app.js /opt/app.js
 vrf_error
 
 # reiniciando o nginx
@@ -108,17 +106,31 @@ echo "reiniciando o servidor web"
 systemctl restart nginx
 vrf_error
 
+# criando pasta de agendamentos
+if [ ! -d /agendamentos ]; then
+  mkdir /agendamentos
+fi
+
 # sistema de verificacao de servico ativo
 echo "criando monitoramento da aplicacao a cada 5 segundos"
-mkdir /agendamentos
-cp reboot_services.sh /agendamentos/
-chmod u+x /agendamentos/reboot_services.sh
+cp scripts/reboot_services.sh /agendamentos/ && \
+chmod u+x /agendamentos/reboot_services.sh && \
 echo "* * * * * sleep 5 && /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
+vrf_error
+
+# sistema de verificacao de acesso ao servidor web
+echo "criando monitoramento de acesso ao servidor web"
+cp scripts/frequencia_web.sh /agendamentos/ && \
+chmod u+x /agendamentos/frequencia_web.sh && \
+echo "59 23 * * * /agendamentos/frequencia_web.sh" >> /var/spool/cron/crontabs/root
+vrf_error
 
 # iniciando a app
-echo "iniciando a aplicacao em modo cluster e balanceamento de carga"
+echo "iniciando a aplicacao node.js"
 pm2 start /opt/app.js -i 0
 vrf_error
+
+echo "procedimento concluido com sucesso!"
 
 # ajuda
 echo "ajuda:"
