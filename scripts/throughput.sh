@@ -1,4 +1,5 @@
 #!/bin/bash
 
 echo "Teste de Carga - Benchmarking"
-ab -n ${requisicoes} -c ${usuarios} http://127.0.0.1/
+echo
+siege -d10 -c50 -t60s http://127.0.0.1/
