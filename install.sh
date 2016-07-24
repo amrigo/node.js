@@ -145,7 +145,7 @@ fi
 echo "criando monitoramento da aplicacao"
 cp ./scripts/reboot_services.sh /agendamentos/ > /dev/null && \
 chmod u+x /agendamentos/reboot_services.sh > /dev/null && \
-echo "*/1 * * * * /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
+echo "*/1 * * * * root /agendamentos/reboot_services.sh" >> /etc/crontab
 if [ $? -ne 0 ]; then
   echo "erro ao criar servico de monitoramento"
   echo "processo cancelado"
@@ -164,7 +164,7 @@ if [ ! -d /relatorios ]; then
 fi
 cp ./scripts/frequencia_web.sh /agendamentos/ > /dev/null && \
 chmod u+x /agendamentos/frequencia_web.sh > /dev/null && \
-echo "59 23 * * * /agendamentos/frequencia_web.sh" >> /var/spool/cron/crontabs/root
+echo "59 23 * * * root /agendamentos/frequencia_web.sh" >> /etc/crontab
 if [ $? -ne 0 ]; then
   echo "erro ao criar servico de verificacao de acesso ao servidor web"
   echo "processo cancelado"
@@ -243,7 +243,7 @@ fi
 
 # reiniciando servico de crontab
 echo "reiniciando servico de agendamento"
-/etc/init.d/cron restart
+/etc/init.d/cron restart > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao reiniciar servico de agendamento"
   echo "processo cancelado"
