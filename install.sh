@@ -135,7 +135,7 @@ fi
 echo "criando monitoramento da aplicacao"
 cp ./scripts/reboot_services.sh /agendamentos/ > /dev/null && \
 chmod u+x /agendamentos/reboot_services.sh > /dev/null && \
-echo "* * * * * sleep 5 && /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
+echo "*/1 * * * * /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
 if [ $? -ne 0 ]; then
   echo "erro ao criar servico de monitoramento"
   echo "processo cancelado"
