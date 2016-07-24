@@ -234,13 +234,22 @@ fi
 
 # iniciando a app
 echo "iniciando a aplicacao node.js"
-pm2 -f start /opt/app.js -i 0 > /dev/null
+pm2 startup /opt/app.js -i 0 > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao iniciar aplicacao node.js"
   echo "processo cancelado"
   exit 1
+fi
+
+# reiniciando servico de crontab
+echo "reiniciando servico de agendamento"
+/etc/init.d/cron restart
+if [ $? -ne 0 ]; then
+  echo "erro ao reiniciar servico de agendamento"
+  echo "processo cancelado"
+  exit 1
 else
-  echo "procedimento concluido com sucesso!"
+  echo "processo concluido com sucesso"
 fi
 
 # ajuda
