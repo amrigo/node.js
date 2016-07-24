@@ -60,6 +60,8 @@
 
 dia=$(date +%d-%m-%Y)
 
+log="/relatorios/${dia}.log"
+
 codigo="100 101 122 200 201 202 203 204 \
         205 206 207 300 301 302 304 305 \
         306 307 400 401 402 403 404 405 \
@@ -68,20 +70,22 @@ codigo="100 101 122 200 201 202 203 204 \
         425 426 450 499 500 501 502 503 \
         504 505"
 
-echo "relatorio de acesso ao servidor web"
-echo
-echo "dia: ${dia}"
-echo
+echo "Relatório de acesso ao servidor web" >> $log
+echo >> $log
+echo "dia: ${dia}" >> $log
+echo >> $log
 
 for x in $codigo; do
   if grep -w ${x} /var/log/nginx/access.log > /dev/null; then
-    echo "codigo de resposta: ${x}"
-    printf "quantidade: "
-    grep ${x} /var/log/nginx/access.log | wc -l
+    echo "codigo de resposta: ${x}" >> $log
+    printf "quantidade: " >> $log
+    grep ${x} /var/log/nginx/access.log | wc -l >> $log
   fi
 done
 
-echo
-echo "para maiores informacoes consulte o script em /agendamentos/frequencia_web.sh"
+echo >> $log
+echo "para maiores informacoes consulte o script em /agendamentos/frequencia_web.sh" >> $log
+
+cat ${log} | mail -s "Relatório de Frequência de Acesso ao Servidor Web" root@$HOSTNAME
 
 exit 0

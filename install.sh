@@ -9,6 +9,14 @@ if [ $(id -u) -ne 0 ]; then
   exit 1
 fi
 
+echo
+echo "########################################################"
+echo "##########    Sistema de deploy do Node.JS    ##########"
+echo "########################################################"
+echo
+echo "Bem-vindo ao sistema de deploy do Servidor Node.JS" 
+echo
+
 # verifica a versao do sistema operacional
 if [ $(lsb_release -r | awk -F" " '{ print $2 }') != "16.04" ]; then
   echo "sistema homologado para a versao: ubuntu 16.04 LTS"
@@ -38,6 +46,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # iniciando procedimento
+echo
 echo "iniciando deploy..."
 echo
 
@@ -58,11 +67,20 @@ fi
 echo "instalando servidor web"
 apt-get install -y nginx -q > /dev/null && \
 echo "copiando arquivos de configuracao" && \
-cp ./web/default /etc/nginx/sites-available/default && \
-cp ./private/cert.crt /etc/ssl/private/cert.crt && \
-cp ./private/cert.key /etc/ssl/private/cert.key
+cp ./web/default /etc/nginx/sites-available/default > /dev/null && \
+cp ./private/cert.crt /etc/ssl/private/cert.crt > /dev/null && \
+cp ./private/cert.key /etc/ssl/private/cert.key > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro na instalacao do servidor web"
+  echo "processo cancelado"
+  exit 1
+fi
+
+# instalando servico de email
+echo "instalando servico de email"
+apt-get install -y mailutils -q > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro na instalacao do servico de email"
   echo "processo cancelado"
   exit 1
 fi
@@ -83,10 +101,54 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "criando links da aplicacao"
-ln -s /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm && \
-ln -s /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node
+ln -sf /opt/node-v4.4.7-linux-x64/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm > /dev/null && \
+ln -sf /opt/node-v4.4.7-linux-x64/bin/node /usr/bin/node > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao criar link da aplicacao node"
+  echo "processo cancelado"
+  exit 1
+fi
+
+# copiando arquivo da aplicacao
+echo "copiando aplicacao do node para o sistema"
+cp ./apps/app.js /opt/app.js > /dev/null
+if [ $? -ne 0 ]; then
+  echo "erro ao copiar aplicacao node.js"
+  echo "processo cancelado"
+  exit 1
+fi
+
+# criando pasta de agendamentos
+if [ ! -d /agendamentos ]; then
+  mkdir /agendamentos
+fi
+
+# sistema de verificacao de servico ativo
+echo "criando monitoramento da aplicacao"
+cp ./scripts/reboot_services.sh /agendamentos/ > /dev/null && \
+chmod u+x /agendamentos/reboot_services.sh > /dev/null && \
+echo "* * * * * sleep 5 && /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
+if [ $? -ne 0 ]; then
+  echo "erro ao criar servico de monitoramento"
+  echo "processo cancelado"
+  exit 1
+fi
+
+# sistema de verificacao de acesso ao servidor web
+echo "criando monitoramento de acesso ao servidor web"
+if [ ! -d /relatorios ]; then
+  mkdir /relatorios
+  if [ $? -ne 0 ]; then
+    echo "erro ao criar diretorio de relatorios"
+    echo "processo cancelado"
+    exit 1
+  fi
+fi
+cp ./scripts/frequencia_web.sh /agendamentos/ > /dev/null && \
+chmod u+x /agendamentos/frequencia_web.sh > /dev/null && \
+echo "59 23 * * * /agendamentos/frequencia_web.sh" >> /var/spool/cron/crontabs/root
+if [ $? -ne 0 ]; then
+  echo "erro ao criar servico de verificacao de acesso ao servidor web"
   echo "processo cancelado"
   exit 1
 fi
@@ -102,14 +164,14 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "instalando pm2"
-npm install pm2 -g
+npm install pm2 -g 2>&1&> /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao instalar dependencia pm2"
   echo "processo cancelado"
   exit 1
 fi
 echo "criando link da aplicacao"
-ln -s /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2
+ln -sf /opt/node_modules/pm2/bin/pm2 /usr/bin/pm2 > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao criar link da dependencia pm2"
   echo "processo cancelado"
@@ -123,54 +185,18 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# copiando arquivo da aplicacao
-echo "copiando aplicacao do node para o sistema"
-cp ./apps/app.js /opt/app.js
-if [ $? -ne 0 ]; then
-  echo "erro ao copiar aplicacao node.js"
-  echo "processo cancelado"
-  exit 1
-fi
-
 # reiniciando o nginx
 echo "reiniciando o servidor web"
-systemctl restart nginx
+systemctl restart nginx > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao reiniciar servidor web"
   echo "processo cancelado"
   exit 1
 fi
 
-# criando pasta de agendamentos
-if [ ! -d /agendamentos ]; then
-  mkdir /agendamentos
-fi
-
-# sistema de verificacao de servico ativo
-echo "criando monitoramento da aplicacao a cada 5 segundos"
-cp ./scripts/reboot_services.sh /agendamentos/ && \
-chmod u+x /agendamentos/reboot_services.sh && \
-echo "* * * * * sleep 5 && /agendamentos/reboot_services.sh" >> /var/spool/cron/crontabs/root
-if [ $? -ne 0 ]; then
-  echo "erro ao criar servico de monitoramento"
-  echo "processo cancelado"
-  exit 1
-fi
-
-# sistema de verificacao de acesso ao servidor web
-echo "criando monitoramento de acesso ao servidor web"
-cp scripts/frequencia_web.sh /agendamentos/ && \
-chmod u+x /agendamentos/frequencia_web.sh && \
-echo "59 23 * * * /agendamentos/frequencia_web.sh" >> /var/spool/cron/crontabs/root
-if [ $? -ne 0 ]; then
-  echo "erro ao criar servico de verificacao de acesso ao servidor web"
-  echo "processo cancelado"
-  exit 1
-fi
-
 # iniciando a app
 echo "iniciando a aplicacao node.js"
-pm2 start /opt/app.js -i 0
+pm2 -f start /opt/app.js -i 0 > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao iniciar aplicacao node.js"
   echo "processo cancelado"
@@ -180,6 +206,7 @@ else
 fi
 
 # ajuda
+echo
 echo "ajuda:"
 echo
 echo "digite: pm2 list # para listar sua aplicacao em execucao"

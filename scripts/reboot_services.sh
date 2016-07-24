@@ -10,5 +10,5 @@ fi
 # reinicia o servidor node
 pidof app.js > /dev/null
 if [ $? -ne 0 ]; then
-  pm2 start /opt/app.js -i 0
+  pm2 -f start /opt/app.js -i 0
 fi
