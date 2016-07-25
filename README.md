@@ -24,15 +24,15 @@ Para executar corretamente a aplicação, tenha instalado o Ubuntu 16.04 LTS. <b
 ## Navegando nas pastas da aplicação
 
 ```bash
-$ install.sh            # Script de instalação da aplicação.
+$ install.sh            # Script que instala a aplicação.
 $ app.js		# Script de exemplo que exibe "Hello World" no navegador http://<seu_ip> ou https://<seu_ip>.
 $ cert.crt		# Chave ssl para acesso https.
 $ cert.key		# Chave ssl para acesso https.
-$ frequencia_web.sh	# Script que gera o relatório por código http de acessos diariamente eviador por e-mail.
-$ reboot_services.sh	# Script que verifica se o servidor web e aplicação node estão ativos.
-$ throughput.sh		# Script que gera teste de carga no servidor, e gera relatório enviado por e-mail.
-$ uproll.sh		# Script que atualiza de forma segura a versão da aplicação.
-$ default		# Arquivo de configuração do nginx para HA e proxy reverso e acesso https.
+$ frequencia_web.sh	# Script que gera um relatório por código http de acessos enviados diariamente por e-mail.
+$ reboot_services.sh	# Script que verifica se o servidor web e aplicação node estão ativos, e reinicia caso necessário..
+$ throughput.sh		# Script que gera teste de carga no servidor, gerando um relatório enviado por e-mail.
+$ uproll.sh		# Script que atualiza de forma segura a versão da aplicação, e rollback caso necessário.
+$ default		# Arquivo de configuração do nginx para HA, proxy reverso e acesso https.
 ```
 
 ## Comandos úteis
