@@ -126,15 +126,37 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# criando pasta de agendamentos
-if [ ! -d /agendamentos ]; then
-  mkdir /agendamentos
+# criando pasta de scripts
+if [ ! -d /scripts ]; then
+  mkdir /scripts
+fi
+
+# criando pastas para guardar relatorios [ web e throughput ]
+if [ ! -d /relatorios/ ]; then
+  mkdir -p /relatorios/web && mkdir -p /relatorios/throughput
+  if [ $? -ne 0 ]; then
+    echo "erro ao criar diretorio de relatorios"
+    echo "processo cancelado"
+    exit 1
+  fi
+fi
+
+# sistema de verificacao de acesso ao servidor web
+echo "criando monitoramento de acesso ao servidor web"
+cp ./scripts/frequencia_web.sh /scripts/ > /dev/null && \
+chmod u+x /scripts/frequencia_web.sh > /dev/null && \
+echo "59 23 * * * root /scripts/frequencia_web.sh" >> /etc/crontab
+if [ $? -ne 0 ]; then
+  echo "erro ao criar servico de verificacao de acesso ao servidor web"
+  echo "processo cancelado"
+  exit 1
 fi
 
 # copiando arquivo de throughput
 echo "copiando arquivo de throughput"
-cp ./scripts/throughput.sh /agendamentos/ > /dev/null && \
-chmod u+x /agendamentos/throughput.sh
+cp ./scripts/throughput.sh /scripts/ > /dev/null && \
+chmod u+x /scripts/throughput.sh > /dev/null && \
+echo "0 2 * * * root /scripts/throughput.sh" >> /etc/crontab
 if [ $? -ne 0 ]; then
   echo "erro ao copiar arquivo de throughput"
   echo "processo cancelado"
@@ -143,36 +165,17 @@ fi
 
 # sistema de verificacao de servico ativo
 echo "criando monitoramento da aplicacao"
-cp ./scripts/reboot_services.sh /agendamentos/ > /dev/null && \
-chmod u+x /agendamentos/reboot_services.sh > /dev/null && \
-echo "*/1 * * * * root /agendamentos/reboot_services.sh" >> /etc/crontab
+cp ./scripts/reboot_services.sh /scripts/ > /dev/null && \
+chmod u+x /scripts/reboot_services.sh > /dev/null && \
+echo "*/1 * * * * root /scripts/reboot_services.sh" >> /etc/crontab
 if [ $? -ne 0 ]; then
   echo "erro ao criar servico de monitoramento"
   echo "processo cancelado"
   exit 1
 fi
 
-# sistema de verificacao de acesso ao servidor web
-echo "criando monitoramento de acesso ao servidor web"
-if [ ! -d /relatorios ]; then
-  mkdir /relatorios
-  if [ $? -ne 0 ]; then
-    echo "erro ao criar diretorio de relatorios"
-    echo "processo cancelado"
-    exit 1
-  fi
-fi
-cp ./scripts/frequencia_web.sh /agendamentos/ > /dev/null && \
-chmod u+x /agendamentos/frequencia_web.sh > /dev/null && \
-echo "59 23 * * * root /agendamentos/frequencia_web.sh" >> /etc/crontab
-if [ $? -ne 0 ]; then
-  echo "erro ao criar servico de verificacao de acesso ao servidor web"
-  echo "processo cancelado"
-  exit 1
-fi
-
 # copiando arquivo de deploy e rollback
-cp ./scripts/uproll.sh /agendamentos/ > /dev/null
+cp ./scripts/uproll.sh /scripts/ > /dev/null
 if [ $? -ne 0 ]; then
   echo "erro ao copiar arquivo"
   echo "processo cancelado"

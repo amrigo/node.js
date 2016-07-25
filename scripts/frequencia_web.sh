@@ -60,7 +60,7 @@
 
 dia=$(date +%d-%m-%Y)
 
-log="/relatorios/${dia}.log"
+log="/relatorios/web/${dia}.log"
 
 codigo="100 101 122 200 201 202 203 204 \
         205 206 207 300 301 302 304 305 \
