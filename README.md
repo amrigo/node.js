@@ -21,8 +21,7 @@ PM2 Versao: v1.1.3
 npm Versao: v2.15.8
 
 ## NOTA: Quando instalar o serviço de email, escolha:
-1) Internet Site
-
+1) Internet Site <br/>
 2) System mail name: $HOSTNAME
 
 ## Informativo de cada script:
