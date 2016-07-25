@@ -7,8 +7,7 @@
   <br/>
 </div>
 
-Bem-vindos,
-
+Bem-vindos, <br/>
 Neste projeto irei abordar uma aplicação simples utilizando o Node.JS + PM2 (Balanceamento de Carga e Cluster) + Linux + Nginx (Proxy Reverso).
 
 Para executar a aplicação tenha instalado o Ubuntu 16.04 LTS.
