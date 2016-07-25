@@ -44,7 +44,7 @@ $ pm2 show [app-name]	# Mostra todas as informações sobre a aplicação.
 $ pm2 logs		# Mostra os logs de todas as aplicações.
 ```
 
-### Para mais comandos sobre a aplicação PM2
+### Para mais informações sobre a aplicação PM2
 Repositório da aplicação: [PM2](https://github.com/Unitech/pm2)
 
-## Obrigado
+## Obrigado!
