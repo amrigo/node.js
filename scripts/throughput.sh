@@ -8,13 +8,13 @@ echo > $log
 echo "Teste de Carga - Benchmarking" >> $log
 echo >> $log
 echo "Executando teste com 500 conexões em 15 segundos" >> $log
-siege -d10 -c500 -t15s http://127.0.0.1/ >> $log
+siege -d10 -c500 -t15s http://127.0.0.1/ 2>> $log
 echo >> $log
 echo "Executando teste com 1000 conexões em 15 segundos" >> $log
-siege -d10 -c1000 -t15s http://127.0.0.1/ >> $log
+siege -d10 -c1000 -t15s http://127.0.0.1/ 2>> $log
 echo >> $log
 echo "Executando teste com 2500 conexões em 15 segundos" >> $log
-siege -d10 -c2500 -t15s http://127.0.0.1/ >> $log
+siege -d10 -c2500 -t15s http://127.0.0.1/ 2>> $log
 echo >> $log
 
 # número de falhas do último teste de benchmarking
@@ -26,7 +26,7 @@ else
   echo "Não estão ocorrendo falhas" >> $log
 fi
 
-echo "Demonstrativo dos últimos dez testes de benchmarking" >> $log
+echo "Demonstrativo dos últimos testes de benchmarking" >> $log
 tail -n 10 /var/log/siege.log >> $log
 
 # enviando email para root com o demonstrativo
