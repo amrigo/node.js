@@ -30,14 +30,14 @@ $ ./install.sh 		# Este procedimento irá instalar toda a aplicação
 ## Navegando nas pastas da aplicação
 
 ```bash
-$ app.js		# Script de exemplo que exibe "Hello World" no navegador http://<seu_ip> ou https://<seu_ip>
-$ cert.crt		# Chave ssl para acesso https
-$ cert.key		# Chave ssl para acesso https
-$ frequencia_web.sh	# Script que gera o relatório por código http de acessos diariamente eviador por e-mail
-$ reboot_services.sh	# Script que verifica se o servidor web e aplicação node estão ativos
-$ throughput.sh		# Script que gera teste de carga no servidor, e gera relatório enviado por e-mail
-$ uproll.sh		# Script que atualiza de forma segura a versão da aplicação
-$ default		# Arquivo de configuração do nginx para HA e proxy reverso
+$ app.js			# Script de exemplo que exibe "Hello World" no navegador http://<seu_ip> ou https://<seu_ip>
+$ cert.crt			# Chave ssl para acesso https
+$ cert.key			# Chave ssl para acesso https
+$ frequencia_web.sh		# Script que gera o relatório por código http de acessos diariamente eviador por e-mail
+$ reboot_services.sh		# Script que verifica se o servidor web e aplicação node estão ativos
+$ throughput.sh			# Script que gera teste de carga no servidor, e gera relatório enviado por e-mail
+$ uproll.sh			# Script que atualiza de forma segura a versão da aplicação
+$ default			# Arquivo de configuração do nginx para HA e proxy reverso
 ```
 
 # Obrigado!
